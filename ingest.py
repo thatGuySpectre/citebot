@@ -13,8 +13,10 @@ with open("keys.yaml") as f:
 
 splitter = RecursiveCharacterTextSplitter(["\n\n", ". \n", "\n", " ", ""], chunk_size=500, chunk_overlap=100)
 
+# local file paths also work
 urls = ["https://arxiv.org/pdf/2304.01852.pdf",
         "https://arxiv.org/pdf/q-bio/0511037.pdf"]
+
 docs = []
 for url in urls:
     raw_docs = PyPDFLoader(file_path=url).load_and_split(text_splitter=splitter)
@@ -22,4 +24,5 @@ for url in urls:
         d.metadata.update({"source": f"{url} page {d.metadata['page']}"})
     docs.extend(raw_docs)
 
+# for actual use should use a better embeddings model, for example embeddings=OpenAiEmbeddings
 db = Chroma.from_documents(docs, persist_directory="db")
